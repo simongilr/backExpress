@@ -1,32 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //DOCKER DB
 
 docker run --name mysql-local \
@@ -101,9 +72,6 @@ EXPOSE 3000
 
 # Comando para arrancar tu servidor
 CMD ["npm", "start"]
-
-
-
 
 
 
@@ -186,6 +154,27 @@ docker-compose down -v
 //Reiniciar docker
 killall Docker
 open /Applications/Docker.app
+
+
+
+//Operation get
+const tasks = await Task.findAll();
+
+//Operation create
+const newTask = Task.create({title: title, completed: false});
+
+//Operation update
+  const task = await Task.findByPk(id);
+  task.title = title;
+  task.completed = completed ? completed : false;
+  await task.save();
+
+//Operation delete
+    //const index = tasks.findIndex(t => t.id == id);
+    const task = await Task.findByPk(id);
+
+    //tasks.splice(index, 1);
+    await task.destroy();
 
 
 

@@ -1,0 +1,191 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//DOCKER DB
+
+docker run --name mysql-local \
+  -e MYSQL_ROOT_PASSWORD=1234 \
+  -e MYSQL_DATABASE=tasksdb \
+  -p 3306:3306 \
+  -d mysql:8
+
+//sequelize
+npm install sequelize sequelize-cli mysql2
+npx sequelize-cli init
+
+
+//Configure
+
+npx sequelize-cli init
+
+//Configure
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve('src/database/config', 'config.json'),
+  'models-path': path.resolve('src/database/models'),
+  'seeders-path': path.resolve('src/database/seeders'),
+  'migrations-path': path.resolve('src/database/migrations')
+};
+
+//Migracion
+npx sequelize-cli model:generate --name Task --attributes title:string,completed:boolean
+
+
+//migrar
+npx sequelize-cli db:migrate
+
+
+
+
+//Controller
+const task = tasks.find(t => t.id == parseInt(id))
+
+const index = tasks.findIndex(t => t.id == parseInt(id))
+tasks.splice(index, 1);
+
+
+
+//controller con persistencia
+const task = await Task.findByPk(id);
+await task.save();
+
+await task.destroy();
+
+
+// Dockerfile
+
+# Usa una imagen oficial de Node.js
+FROM node:18
+
+# Crea el directorio de la app
+WORKDIR /usr/src/app
+
+# Copia los archivos de configuración primero (para aprovechar la caché)
+COPY package*.json ./
+
+# Instala dependencias
+RUN npm install
+
+# Copia el resto del código
+COPY . .
+
+# Expón el puerto donde corre tu app (por ejemplo 3000)
+EXPOSE 3000
+
+# Comando para arrancar tu servidor
+CMD ["npm", "start"]
+
+
+
+
+
+
+//YML  docker-compose.yml
+
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: tasksdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: .
+    container_name: node_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: 1234
+      DB_NAME: tasksdb
+      DB_DIALECT: mysql
+    command: npm start
+
+volumes:
+  mysql_data:
+
+//.dockerignore
+node_modules
+npm-debug.log
+Dockerfile
+docker-compose.yml
+.git
+.gitignore
+
+
+//
+npm install dotenv
+
+//config.js
+require('dotenv').config();
+
+module.exports = {
+  development: {
+    username: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '1234',
+    database: process.env.DB_NAME || 'tasksdb',
+    host: process.env.DB_HOST || 'localhost',
+    dialect: process.env.DB_DIALECT || 'mysql'
+  }
+};
+
+//package.json mígate
+"migrate": "npx sequelize-cli db:migrate",
+"start:prod": "npm run migrate && npm run start",
+
+//docker-compose
+command: npm run start:prod
+
+
+//generar docker
+docker-compose build
+docker-compose up
+
+//bajar
+docker-compose down -v
+
+//Reiniciar docker
+killall Docker
+open /Applications/Docker.app
+
+
+

@@ -27,7 +27,9 @@ services:
       DB_PASSWORD: 1234
       DB_NAME: tasksdb
       DB_DIALECT: mysql
-    command: npm start
+    command: sh -c "sleep 10 && npm run migrate && npm run start:prod"
 
 volumes:
   mysql_data:
+
+
